@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panadería La Desesperanza - Inicio</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <h1 class="logo">La Desesperanza</h1>
+        <nav class="main-nav">
+          <a href="index.html" class="nav-link active">Inicio</a>
+          <a href="productos.html" class="nav-link">Productos</a>
+          <a href="carrito.html" class="nav-link">
+            Carrito 
+            <span class="cart-badge" id="cartBadge">0</span>
+          </a>
+          <a href="dashboard.html" class="nav-link">Panel</a>
+          <a href="login.html" class="nav-link" id="authLink">Login</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h2 class="hero-title">Panadería Tradicional Mexicana</h2>
+      <p class="hero-subtitle">Especialistas en Pan de Muerto y Temporada</p>
+      <div class="hero-buttons">
+        <a href="productos.html" class="btn btn-primary btn-lg">Ver Productos</a>
+        <a href="#temporada" class="btn btn-outline btn-lg">Especiales de Temporada</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Productos Destacados -->
+  <section class="featured-section" id="temporada">
+    <div class="container">
+      <h2 class="section-title"> Especiales de Temporada</h2>
+      <p class="section-subtitle">Descubre nuestros panes artesanales de Halloween y Día de Muertos</p>
+      
+      <div class="products-grid" id="featuredProducts">
+        <!-- Los productos se cargarán dinámicamente -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Categorías -->
+  <section class="categories-section">
+    <div class="container">
+      <h2 class="section-title">Nuestras Categorías</h2>
+      <div class="categories-grid">
+        <div class="category-card">
+          <div class="category-icon">🥐</div>
+          <h3>Pan Dulce</h3>
+          <p>Conchas, orejas y más</p>
+        </div>
+        <div class="category-card">
+          <div class="category-icon">🥖</div>
+          <h3>Pan Salado</h3>
+          <p>Bolillos y teleras frescas</p>
+        </div>
+        <div class="category-card">
+          <div class="category-icon">💀</div>
+          <h3>Temporada</h3>
+          <p>Ediciones especiales</p>
+        </div>
+        <div class="category-card">
+          <div class="category-icon">🍪</div>
+          <h3>Galletas</h3>
+          <p>Artesanales y decoradas</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <p>&copy; 2024 Panadería La Desesperanza. Todos los derechos reservados.</p>
+      <p>📍 Ciudad de México | 📞 55-1234-5678</p>
+    </div>
+  </footer>
+
+  <script src="/js/dashboard.js"></script>
+  <script>
+    // Cargar productos destacados
+    async function loadFeatured() {
+      try {
+        const res = await fetch('/api/productos?temporada=dia_muertos&temporada=halloween');
+        const productos = await res.json();
+        
+        const grid = document.getElementById('featuredProducts');
+        grid.innerHTML = productos.slice(0, 4).map(p => `
+          <div class="product-card">
+            <div class="product-image" style="background-image: url('${p.imagen_url || '/images/default-pan.jpg'}')"></div>
+            <div class="product-info">
+              <span class="product-badge">${p.temporada === 'dia_muertos' ? '💀 Día de Muertos' : '🎃 Halloween'}</span>
+              <h3>${p.nombre}</h3>
+              <p>${p.descripcion || ''}</p>
+              <div class="product-footer">
+                <span class="product-price">$${parseFloat(p.precio).toFixed(2)}</span>
+                <button class="btn btn-sm btn-primary" onclick="addToCart(${p.id_producto})">Agregar</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Error al cargar productos:', error);
+      }
+    }
+
+    async function addToCart(id) {
+      try {
+        const res = await fetch('/api/carrito/agregar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id_producto: id, cantidad: 1 })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          alert('✅ Producto agregado al carrito');
+          updateCartBadge();
+        } else {
+          alert('❌ ' + data.error);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    async function updateCartBadge() {
+      try {
+        const res = await fetch('/api/carrito');
+        const carrito = await res.json();
+        const badge = document.getElementById('cartBadge');
+        badge.textContent = carrito.length;
+        badge.style.display = carrito.length > 0 ? 'inline-block' : 'none';
+      } catch (error) {
+        console.error('Error al actualizar badge:', error);
+      }
+    }
+
+    loadFeatured();
+    updateCartBadge();
+  </script>
+</body>
+</html>

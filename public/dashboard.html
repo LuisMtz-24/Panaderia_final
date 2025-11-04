@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Panadería La Desesperanza</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <h1 class="logo">🍞 La Desesperanza</h1>
+        <nav class="main-nav">
+          <a href="index.html" class="nav-link">Inicio</a>
+          <a href="productos.html" class="nav-link">Productos</a>
+          <a href="carrito.html" class="nav-link">
+            Carrito 
+            <span class="cart-badge" id="cartBadge">0</span>
+          </a>
+          <a href="dashboard.html" class="nav-link active">Panel</a>
+          <button class="btn btn-sm btn-outline" id="logoutBtn" style="margin-left: 10px;">Cerrar Sesión</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Dashboard Content -->
+  <div class="container" style="margin-top: 2rem;">
+    <!-- User Info -->
+    <div class="dashboard-header">
+      <h2>Panel de Administración</h2>
+      <p class="user-info">Bienvenido, <strong id="userName"></strong> (<span id="userRole"></span>)</p>
+    </div>
+
+    <!-- Admin Section -->
+    <div id="adminSection" style="display: none;">
+      <!-- Add Product Form -->
+      <div class="card">
+        <h3>➕ Agregar Nuevo Producto</h3>
+        <form id="addProductForm" class="product-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nombre">Nombre *</label>
+              <input type="text" id="nombre" required placeholder="Ej: Pan de Muerto Tradicional">
+            </div>
+            <div class="form-group">
+              <label for="precio">Precio *</label>
+              <input type="number" id="precio" step="0.01" min="0" required placeholder="0.00">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="stock">Stock *</label>
+              <input type="number" id="stock" min="0" required placeholder="0">
+            </div>
+            <div class="form-group">
+              <label for="categoria">Categoría</label>
+              <select id="categoria">
+                <option value="">Seleccionar...</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" rows="3" placeholder="Descripción del producto"></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="temporada">Temporada</label>
+              <select id="temporada">
+                <option value="regular">Regular</option>
+                <option value="halloween">Halloween</option>
+                <option value="dia_muertos">Día de Muertos</option>
+                <option value="navidad">Navidad</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="imagen_url">URL de Imagen</label>
+              <input type="text" id="imagen_url" placeholder="https://...">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Agregar Producto</button>
+          <p class="mensaje" id="addMessage"></p>
+        </form>
+      </div>
+
+      <!-- Products Management -->
+      <div class="card">
+        <h3>📦 Gestión de Productos</h3>
+        <div class="filters">
+          <select id="filterTemporada" class="filter-select">
+            <option value="">Todas las temporadas</option>
+            <option value="regular">Regular</option>
+            <option value="halloween">Halloween</option>
+            <option value="dia_muertos">Día de Muertos</option>
+            <option value="navidad">Navidad</option>
+          </select>
+          <button class="btn btn-sm btn-primary" id="refreshBtn">🔄 Actualizar</button>
+        </div>
+
+        <div class="table-container">
+          <table class="products-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Temporada</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody">
+              <tr>
+                <td colspan="8" style="text-align: center;">Cargando productos...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Client Section -->
+    <div id="clientSection">
+      <div class="card">
+        <h3>🛍️ Bienvenido</h3>
+        <p>Explora nuestros productos y realiza tus pedidos.</p>
+        <a href="productos.html" class="btn btn-primary">Ver Productos</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Editar Producto -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>✏️ Editar Producto</h2>
+      <form id="editProductForm">
+        <input type="hidden" id="editId">
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editNombre">Nombre *</label>
+            <input type="text" id="editNombre" required>
+          </div>
+          <div class="form-group">
+            <label for="editPrecio">Precio *</label>
+            <input type="number" id="editPrecio" step="0.01" min="0" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editStock">Stock *</label>
+            <input type="number" id="editStock" min="0" required>
+          </div>
+          <div class="form-group">
+            <label for="editCategoria">Categoría</label>
+            <select id="editCategoria">
+              <option value="">Seleccionar...</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="editDescripcion">Descripción</label>
+          <textarea id="editDescripcion" rows="3"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editTemporada">Temporada</label>
+            <select id="editTemporada">
+              <option value="regular">Regular</option>
+              <option value="halloween">Halloween</option>
+              <option value="dia_muertos">Día de Muertos</option>
+              <option value="navidad">Navidad</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editImagen">URL de Imagen</label>
+            <input type="text" id="editImagen">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="editActivo">
+            Producto Activo
+          </label>
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+          <button type="button" class="btn btn-outline" id="cancelEdit">Cancelar</button>
+        </div>
+        <p class="mensaje" id="editMessage"></p>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
