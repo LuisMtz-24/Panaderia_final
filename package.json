@@ -1,14 +1,22 @@
 {
   "name": "panaderia-definitiva",
   "version": "1.0.0",
+  "description": "Sistema de e-commerce para Panadería La Desesperanza",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "panaderia",
+    "ecommerce",
+    "nodejs",
+    "express",
+    "mysql"
+  ],
+  "author": "Panadería La Desesperanza",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
@@ -19,5 +27,9 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   }
 }

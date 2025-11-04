@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrito - Panadería La Desesperanza</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <h1 class="logo">🍞 La Desesperanza</h1>
+        <nav class="main-nav">
+          <a href="index.html" class="nav-link">Inicio</a>
+          <a href="productos.html" class="nav-link">Productos</a>
+          <a href="carrito.html" class="nav-link active">
+            Carrito 
+            <span class="cart-badge" id="cartBadge">0</span>
+          </a>
+          <a href="dashboard.html" class="nav-link">Panel</a>
+          <a href="login.html" class="nav-link" id="authLink">Login</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="container">
+      <h1>🛒 Mi Carrito de Compras</h1>
+      <p>Revisa y confirma tu pedido</p>
+    </div>
+  </div>
+
+  <!-- Cart Content -->
+  <section style="padding: 3rem 0; min-height: 60vh;">
+    <div class="container">
+      <div id="cartLayout" class="cart-layout" style="display: none;">
+        <!-- Cart Items -->
+        <div class="cart-items">
+          <div class="cart-header">
+            <h2>Productos en tu carrito</h2>
+            <button class="btn btn-sm btn-danger" id="clearCartBtn">🗑️ Vaciar Carrito</button>
+          </div>
+          <div id="cartItemsContainer">
+            <!-- Los items se cargarán aquí -->
+          </div>
+        </div>
+
+        <!-- Cart Summary -->
+        <div class="cart-summary">
+          <h2>Resumen del Pedido</h2>
+          
+          <div class="summary-row">
+            <span>Subtotal:</span>
+            <span id="subtotal">$0.00</span>
+          </div>
+          
+          <div class="summary-row">
+            <span>Tarifa de envío:</span>
+            <span id="shipping">$50.00</span>
+          </div>
+          
+          <div class="summary-divider"></div>
+          
+          <div class="summary-row">
+            <strong>Total:</strong>
+            <strong class="summary-total" id="total">$0.00</strong>
+          </div>
+
+          <div class="summary-actions">
+            <button class="btn btn-primary btn-block" id="checkoutBtn">
+              💳 Proceder al Pago
+            </button>
+            <a href="productos.html" class="btn btn-outline btn-block">
+              ← Seguir Comprando
+            </a>
+          </div>
+
+          <div class="payment-methods">
+            <p class="payment-title">Métodos de pago aceptados:</p>
+            <div class="payment-icons">
+              💳 💵 📱
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty Cart -->
+      <div id="emptyCart" class="empty-cart" style="display: none;">
+        <div class="empty-cart-icon">🛒</div>
+        <h3>Tu carrito está vacío</h3>
+        <p>Agrega productos para comenzar tu pedido</p>
+        <a href="productos.html" class="btn btn-primary btn-lg">Ver Productos</a>
+      </div>
+
+      <!-- Loading -->
+      <div id="loadingCart" class="loading-message">
+        Cargando carrito...
+      </div>
+    </div>
+  </section>
+
+  <!-- Checkout Modal -->
+  <div id="checkoutModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>💳 Finalizar Compra</h2>
+      
+      <div class="checkout-info">
+        <h3>Resumen de tu pedido</h3>
+        <div class="summary-row">
+          <span>Total de productos:</span>
+          <span id="modalItemsCount">0</span>
+        </div>
+        <div class="summary-row">
+          <strong>Total a pagar:</strong>
+          <strong class="summary-total" id="modalTotal">$0.00</strong>
+        </div>
+      </div>
+
+      <form id="checkoutForm" class="checkout-form">
+        <div class="form-group">
+          <label for="direccion">Dirección de entrega *</label>
+          <input type="text" id="direccion" class="form-control" required 
+                 placeholder="Calle, número, colonia">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="ciudad">Ciudad *</label>
+            <input type="text" id="ciudad" class="form-control" required 
+                   placeholder="Ciudad de México">
+          </div>
+          <div class="form-group">
+            <label for="codigoPostal">Código Postal *</label>
+            <input type="text" id="codigoPostal" class="form-control" required 
+                   placeholder="00000">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="metodoPago">Método de Pago *</label>
+          <select id="metodoPago" class="form-control" required>
+            <option value="">Seleccionar...</option>
+            <option value="efectivo">💵 Efectivo</option>
+            <option value="tarjeta">💳 Tarjeta</option>
+            <option value="transferencia">📱 Transferencia</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="notas">Notas adicionales (opcional)</label>
+          <textarea id="notas" class="form-control" rows="3" 
+                    placeholder="Instrucciones especiales para la entrega..."></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Confirmar Pedido</button>
+          <button type="button" class="btn btn-outline" id="cancelCheckout">Cancelar</button>
+        </div>
+        <p class="mensaje" id="checkoutMessage"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <p>&copy; 2024 Panadería La Desesperanza. Todos los derechos reservados.</p>
+      <p>📍 Ciudad de México | 📞 55-1234-5678</p>
+    </div>
+  </footer>
+
+  <script src="/js/carrito.js"></script>
+</body>
+</html>
