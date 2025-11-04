@@ -1,10 +1,11 @@
+require('dotenv').config();
 const mysql = require('mysql2/promise');
 
 const pool = mysql.createPool({
-  host: process.env.MYSQL_HOST || 'tramway.proxy.rlwy.net',
-  port: process.env.MYSQL_PORT || 52463,
+  host: process.env.MYSQL_HOST || 'localhost',
+  port: process.env.MYSQL_PORT ? Number(process.env.MYSQL_PORT) : 3306,
   user: process.env.MYSQL_USER || 'root',
-  password: process.env.MYSQL_PASSWORD || 'TjaZprBUqjXhNXihYezGiNZyRywSIGKS',
+  password: process.env.MYSQL_PASSWORD || '',
   database: process.env.MYSQL_DATABASE || 'pan',
   waitForConnections: true,
   connectionLimit: 10,
@@ -13,7 +14,6 @@ const pool = mysql.createPool({
   keepAliveInitialDelay: 0
 });
 
-// Verificar conexión al iniciar
 pool.getConnection()
   .then(connection => {
     console.log('✅ Conexión exitosa a la base de datos MySQL');
